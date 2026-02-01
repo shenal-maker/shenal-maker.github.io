@@ -434,7 +434,10 @@ const words: WordItem[] = [
     tags: ["Curious", "Alive", "Whimsical"],
     content:
       "Gave a talk about courage and stepping outside your comfort zone. Was the only undergrad speaker.",
-    links: [{ label: "watch", href: "#tedx-video" }],
+    links: [
+      { label: "Mind Games and Melodies", href: "https://www.youtube.com/watch?v=kYTRQUEYhn0" },
+      { label: "A Composer's Guide to Rescaling your Comfort Zone", href: "https://www.youtube.com/watch?v=tdVN7vrWu54" },
+    ],
   },
   {
     text: "music composing",
