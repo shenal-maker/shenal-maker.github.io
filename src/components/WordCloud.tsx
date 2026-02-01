@@ -595,9 +595,11 @@ interface Placed {
   y: number;
   w: number;
   h: number;
-  angle: number;
-  radius: number;
-  speed: number;
+  baseX: number;
+  baseY: number;
+  driftAngle: number;
+  driftSpeed: number;
+  driftRadius: number;
 }
 
 function measureWord(text: string, fontSize: number) {
@@ -630,14 +632,12 @@ function placeWords(wordList: WordItem[], screenW: number, screenH: number): Pla
   const indexed = wordList.map((w, i) => ({ word: w, idx: i }));
   indexed.sort((a, b) => b.word.size - a.word.size);
 
-  // Assign to fixed orbits to prevent collisions
-  const orbitRings: Array<{ radius: number; occupied: number[] }> = [];
-
   for (let idx = 0; idx < indexed.length; idx++) {
     const { word } = indexed[idx];
     const { w, h } = measureWord(word.text, word.size);
 
-    let bestAngle = 0;
+    let bestX = 0;
+    let bestY = 0;
     let bestRadius = 0;
     let found = false;
 
@@ -645,7 +645,7 @@ function placeWords(wordList: WordItem[], screenW: number, screenH: number): Pla
     for (let r = 140; r < Math.min(screenW, screenH) * 0.48; r += 22) {
       const attempts = Math.max(12, Math.floor((r * Math.PI * 2) / 80));
       
-      // Generate candidate angles evenly spaced around the orbit
+      // Generate candidate positions evenly spaced around a circle
       for (let a = 0; a < attempts; a++) {
         const angle = (a / attempts) * Math.PI * 2;
         const rx = r * (screenW / screenH) * 0.85;
@@ -669,14 +669,15 @@ function placeWords(wordList: WordItem[], screenW: number, screenH: number): Pla
         // Check collision with all previously placed words
         let overlaps = false;
         for (const p of placed) {
-          if (rectsOverlap(candidate, { x: p.x, y: p.y, w: p.w, h: p.h }, 12)) {
+          if (rectsOverlap(candidate, { x: p.baseX, y: p.baseY, w: p.w, h: p.h }, 12)) {
             overlaps = true;
             break;
           }
         }
 
         if (!overlaps) {
-          bestAngle = angle;
+          bestX = px;
+          bestY = py;
           bestRadius = r;
           found = true;
           break;
@@ -686,21 +687,29 @@ function placeWords(wordList: WordItem[], screenW: number, screenH: number): Pla
     }
 
     if (!found) {
-      bestAngle = (idx / indexed.length) * Math.PI * 2;
-      bestRadius = 200 + idx * 12;
+      const angle = (idx / indexed.length) * Math.PI * 2;
+      const r = 200 + idx * 12;
+      const rx = r * (screenW / screenH) * 0.85;
+      const ry = r * 0.9;
+      bestX = cx + Math.cos(angle) * rx;
+      bestY = cy + Math.sin(angle) * ry;
     }
 
-    const speed =
-      (0.0008 + Math.random() * 0.0012) * (Math.random() > 0.5 ? 1 : -1);
+    // Each word gets its own drift parameters
+    const driftSpeed = 0.0012 + Math.random() * 0.0008;
+    const driftRadius = 20 + Math.random() * 15;
+    const driftAngle = Math.random() * Math.PI * 2;
 
     placed.push({
-      x: cx + Math.cos(bestAngle) * bestRadius * (screenW / screenH) * 0.85,
-      y: cy + Math.sin(bestAngle) * bestRadius * 0.9,
+      x: bestX,
+      y: bestY,
       w,
       h,
-      angle: bestAngle,
-      radius: bestRadius,
-      speed,
+      baseX: bestX,
+      baseY: bestY,
+      driftAngle,
+      driftSpeed,
+      driftRadius,
     });
   }
 
@@ -763,9 +772,6 @@ export function WordCloud() {
   const [instrument, setInstrument] = useState<Instrument>("harp");
   const [showInstruments, setShowInstruments] = useState(false);
   const animRef = useRef<number>(0);
-  const draggingRef = useRef<number | null>(null);
-  const dragOffsetRef = useRef({ x: 0, y: 0 });
-  const didDragRef = useRef(false);
 
   useEffect(() => {
     document.body.classList.add("pond-page");
@@ -787,29 +793,24 @@ export function WordCloud() {
 
   useEffect(() => {
     if (placed.length === 0 || dims.w === 0) return;
-    const cx = dims.w / 2;
-    const cy = dims.h / 2;
 
     // On mobile, use CSS animations for better performance
     const isMobile = dims.w < 768;
     
     if (isMobile) {
-      // Mobile: don't animate with JS, let CSS handle it (or disable animation entirely)
+      // Mobile: don't animate with JS
       return;
     }
 
     const animate = () => {
       setPlaced((prev) =>
-        prev.map((p, i) => {
-          if (draggingRef.current === i) return p;
-          const newAngle = p.angle + p.speed;
-          const rx = p.radius * (dims.w / dims.h) * 0.85;
-          const ry = p.radius * 0.9;
+        prev.map((p) => {
+          const newDriftAngle = p.driftAngle + p.driftSpeed;
           return {
             ...p,
-            angle: newAngle,
-            x: cx + Math.cos(newAngle) * rx,
-            y: cy + Math.sin(newAngle) * ry,
+            driftAngle: newDriftAngle,
+            x: p.baseX + Math.cos(newDriftAngle) * p.driftRadius,
+            y: p.baseY + Math.sin(newDriftAngle) * p.driftRadius,
           };
         })
       );
@@ -830,51 +831,20 @@ export function WordCloud() {
     }, 1800);
   }, []);
 
-  const handlePointerDown = useCallback(
-    (index: number, e: React.PointerEvent) => {
-      draggingRef.current = index;
-      didDragRef.current = false;
-      const pos = placed[index];
-      dragOffsetRef.current = { x: e.clientX - pos.x, y: e.clientY - pos.y };
-      (e.target as HTMLElement).setPointerCapture(e.pointerId);
-    },
-    [placed]
-  );
+  const handlePointerDown = useCallback(() => {
+    // No dragging anymore
+  }, []);
 
-  const handlePointerMove = useCallback(
-    (e: React.PointerEvent) => {
-      if (draggingRef.current === null) return;
-      didDragRef.current = true;
-      const i = draggingRef.current;
-      const nx = e.clientX - dragOffsetRef.current.x;
-      const ny = e.clientY - dragOffsetRef.current.y;
-      setPlaced((prev) =>
-        prev.map((p, idx) =>
-          idx === i
-            ? {
-                ...p,
-                x: nx,
-                y: ny,
-                angle: Math.atan2(ny - dims.h / 2, (nx - dims.w / 2) / ((dims.w / dims.h) * 0.85)),
-                radius: Math.sqrt(
-                  ((nx - dims.w / 2) / ((dims.w / dims.h) * 0.85)) ** 2 +
-                  ((ny - dims.h / 2) / 0.9) ** 2
-                ),
-              }
-            : p
-        )
-      );
-    },
-    [dims]
-  );
+  const handlePointerMove = useCallback(() => {
+    // No dragging anymore
+  }, []);
 
   const handlePointerUp = useCallback(() => {
-    draggingRef.current = null;
+    // No dragging anymore
   }, []);
 
   const handleClick = useCallback(
     (index: number, word: WordItem, posX: number, posY: number) => {
-      if (didDragRef.current) { didDragRef.current = false; return; }
       spawnRipple(posX, posY);
 
       // External link (no content to expand)
@@ -1138,9 +1108,6 @@ export function WordCloud() {
           >
             <motion.button
               onClick={() => handleClick(i, word, pos.x, pos.y)}
-              onPointerDown={(e) => handlePointerDown(i, e)}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
               onMouseEnter={() => handleHover(word)}
               className="relative whitespace-nowrap"
               style={{
@@ -1148,8 +1115,7 @@ export function WordCloud() {
                 fontStyle: word.italic ? "italic" : "normal",
                 fontSize: word.size,
                 color: word.color,
-                cursor: word.clickable ? "pointer" : "grab",
-                touchAction: "none",
+                cursor: word.clickable ? "pointer" : "default",
                 opacity: word.clickable ? 1 : 0.6,
                 background: "none",
                 border: "none",
