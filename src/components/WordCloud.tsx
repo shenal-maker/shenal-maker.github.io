@@ -416,15 +416,15 @@ const COLORS = ["#C45D3E", "#6B7FA3", "#8B7AAD", "#7A9E8E", "#B07D82", "#5E8BA0"
 const words: WordItem[] = [
   // --- Clickable with expandable cards ---
   {
-    text: "CranberryTech",
-    size: 28,
+    text: "stealth startup",
+    size: 22,
     color: COLORS[0],
     clickable: true,
     noteIdx: 0,
     tags: ["Intentional", "Focused", "Systems-minded"],
     content:
-      "Building an AI-native title insurance company with my cofounder. We're reimagining the whole conveyor belt, not just making better gloves.",
-    links: [{ label: "website", href: "#cranberrytech-website" }],
+      "Building an AI-native insurance company with my cofounder. We're reimagining the whole conveyor belt, not just making better gloves.",
+    links: [{ label: "schedule a meeting", href: "https://calendly.com/adeleleyishen/connect" }],
   },
   {
     text: "swarm intelligence",
