@@ -58,7 +58,7 @@ function playNote(freq: number) {
       case "kalimba": {
         // Metallic pluck — sharp attack, long resonant decay, hollow body
         const master = ctx.createGain();
-        master.gain.setValueAtTime(0.22, t);
+        master.gain.setValueAtTime(0.16, t);
         master.gain.exponentialRampToValueAtTime(0.06, t + 0.08);
         master.gain.exponentialRampToValueAtTime(0.0001, t + 2.5);
         master.connect(ctx.destination);
@@ -129,15 +129,19 @@ function playNote(freq: number) {
   }
 }
 
-let arpeggioStart = 0;
+function shuffleArray<T>(arr: T[]): T[] {
+  const shuffled = [...arr];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 
 function playArpeggio() {
   const len = 5;
-  const notes = [];
-  for (let i = 0; i < len; i++) {
-    notes.push(NOTES[(arpeggioStart + i) % NOTES.length]);
-  }
-  arpeggioStart = (arpeggioStart + len) % NOTES.length;
+  const shuffledNotes = shuffleArray(NOTES);
+  const notes = shuffledNotes.slice(0, len);
   notes.forEach((freq, i) => {
     setTimeout(() => playNote(freq), i * 90);
   });
