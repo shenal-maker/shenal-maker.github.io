@@ -56,19 +56,19 @@ function playNote(freq: number) {
         break;
       }
       case "marimba": {
-        // Warm wooden marimba strike — percussive with rich harmonics, 2 octaves lower
+        // Warm wooden marimba strike — percussive with rich harmonics
         const master = ctx.createGain();
-        master.gain.setValueAtTime(0.22, t);
-        master.gain.exponentialRampToValueAtTime(0.10, t + 0.08);
+        master.gain.setValueAtTime(0.35, t);
+        master.gain.exponentialRampToValueAtTime(0.15, t + 0.08);
         master.gain.exponentialRampToValueAtTime(0.0001, t + 1.2);
         master.connect(ctx.destination);
         
-        // Warm woody tone: fundamental + octave + slight detuning (all 2 octaves lower)
+        // Warm woody tone: fundamental + octave + slight detuning
         [
-          { f: freq * 0.25, g: 0.16, type: "sine" as OscillatorType },
-          { f: freq * 0.5, g: 0.08, type: "sine" as OscillatorType },
-          { f: freq * 0.245, g: 0.06, type: "triangle" as OscillatorType },
-          { f: freq * 0.375, g: 0.04, type: "sine" as OscillatorType },
+          { f: freq * 0.5, g: 0.20, type: "sine" as OscillatorType },
+          { f: freq, g: 0.12, type: "sine" as OscillatorType },
+          { f: freq * 0.49, g: 0.10, type: "triangle" as OscillatorType },
+          { f: freq * 1.5, g: 0.06, type: "sine" as OscillatorType },
         ].forEach(({ f, g, type }) => {
           const osc = ctx.createOscillator();
           const env = ctx.createGain();
@@ -451,7 +451,7 @@ const words: WordItem[] = [
     color: COLORS[2],
     clickable: true,
     noteIdx: 2,
-    tags: ["Unfinished", "Self-aware", "Reflective"],
+    tags: ["Self-aware", "Reflective"],
     content:
       "VC-backed chess platform. Raised $70K pre-seed. Taught me everything about cofounder dynamics and when to walk away.",
   },
@@ -571,7 +571,6 @@ const words: WordItem[] = [
   { text: "Cerebral", size: 17, color: COLORS[1], italic: true, noteIdx: 1 },
   { text: "Intentional", size: 16, color: COLORS[2], noteIdx: 2 },
   { text: "Liminal", size: 18, color: COLORS[3], italic: true, noteIdx: 3 },
-  { text: "Unfinished", size: 15, color: COLORS[4], italic: true, noteIdx: 4 },
   { text: "Focused", size: 16, color: COLORS[5], noteIdx: 5 },
   { text: "Curious", size: 19, color: COLORS[6], italic: true, noteIdx: 6 },
   { text: "Analytical", size: 15, color: COLORS[0], noteIdx: 7 },
