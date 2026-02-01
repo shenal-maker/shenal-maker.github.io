@@ -770,9 +770,18 @@ export function WordCloud() {
     if (placed.length === 0 || dims.w === 0) return;
     const cx = dims.w / 2;
     const cy = dims.h / 2;
+
+    // On mobile, use CSS animations for better performance
+    const isMobile = dims.w < 768;
+    
+    if (isMobile) {
+      // Mobile: don't animate with JS, let CSS handle it (or disable animation entirely)
+      return;
+    }
+
     const animate = () => {
-      setPlaced((prev) =>
-        prev.map((p, i) => {
+      setPlaced((prev) => {
+        const updated = prev.map((p, i) => {
           if (draggingRef.current === i) return p;
           const newAngle = p.angle + p.speed;
           const rx = p.radius * (dims.w / dims.h) * 0.85;
@@ -783,8 +792,39 @@ export function WordCloud() {
             x: cx + Math.cos(newAngle) * rx,
             y: cy + Math.sin(newAngle) * ry,
           };
-        })
-      );
+        });
+
+        // Check and resolve overlaps to prevent collisions
+        for (let i = 0; i < updated.length; i++) {
+          for (let j = i + 1; j < updated.length; j++) {
+            const a = updated[i];
+            const b = updated[j];
+            const pad = 12; // padding between words
+            
+            if (rectsOverlap(a, { x: b.x, y: b.y, w: b.w, h: b.h }, pad)) {
+              // Push words apart to prevent overlap
+              const dx = b.x - a.x;
+              const dy = b.y - a.y;
+              const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+              const minDist = (a.w + b.w) / 2 + pad;
+              const overlap = minDist - dist;
+              
+              if (overlap > 0) {
+                const nx = dx / dist;
+                const ny = dy / dist;
+                const push = overlap / 2 + 1;
+                
+                updated[i].x -= nx * push;
+                updated[i].y -= ny * push;
+                updated[j].x += nx * push;
+                updated[j].y += ny * push;
+              }
+            }
+          }
+        }
+
+        return updated;
+      });
       animRef.current = requestAnimationFrame(animate);
     };
     animRef.current = requestAnimationFrame(animate);
