@@ -12,7 +12,7 @@ const NOTES = [
   587.33, 659.25, 739.99, 880.00, 987.77,
 ];
 
-type Instrument = "harp" | "glass harmonica" | "theremin";
+type Instrument = "harp" | "marimba" | "theremin";
 
 let currentInstrument: Instrument = "harp";
 
@@ -55,33 +55,33 @@ function playNote(freq: number) {
         setTimeout(() => ctx.close(), 2300);
         break;
       }
-      case "glass harmonica": {
-        // Ethereal glass harmonica — smooth sine wave with subtle vibrato
+      case "marimba": {
+        // Warm wooden marimba strike — percussive with rich harmonics
         const master = ctx.createGain();
-        master.gain.setValueAtTime(0, t);
-        master.gain.linearRampToValueAtTime(0.18, t + 0.4);
-        master.gain.setValueAtTime(0.18, t + 2.2);
-        master.gain.exponentialRampToValueAtTime(0.0001, t + 3.8);
+        master.gain.setValueAtTime(0.16, t);
+        master.gain.exponentialRampToValueAtTime(0.08, t + 0.08);
+        master.gain.exponentialRampToValueAtTime(0.0001, t + 1.2);
         master.connect(ctx.destination);
         
-        const osc = ctx.createOscillator();
-        osc.type = "sine";
-        osc.frequency.value = freq;
-        
-        // Subtle vibrato for that characteristic wavering glass sound
-        const vibrato = ctx.createOscillator();
-        const vibratoGain = ctx.createGain();
-        vibrato.frequency.value = 4.5;
-        vibratoGain.gain.value = freq * 0.012;
-        vibrato.connect(vibratoGain);
-        vibratoGain.connect(osc.frequency);
-        
-        osc.connect(master);
-        osc.start(t);
-        vibrato.start(t);
-        osc.stop(t + 3.8);
-        vibrato.stop(t + 3.8);
-        setTimeout(() => ctx.close(), 4000);
+        // Warm woody tone: fundamental + octave + slight detuning
+        [
+          { f: freq, g: 0.12, type: "sine" as OscillatorType },
+          { f: freq * 2, g: 0.06, type: "sine" as OscillatorType },
+          { f: freq * 0.98, g: 0.04, type: "triangle" as OscillatorType },
+          { f: freq * 1.5, g: 0.03, type: "sine" as OscillatorType },
+        ].forEach(({ f, g, type }) => {
+          const osc = ctx.createOscillator();
+          const env = ctx.createGain();
+          osc.type = type;
+          osc.frequency.value = f;
+          env.gain.setValueAtTime(g, t);
+          env.gain.exponentialRampToValueAtTime(0.0001, t + 1.0);
+          osc.connect(env);
+          env.connect(master);
+          osc.start(t);
+          osc.stop(t + 1.2);
+        });
+        setTimeout(() => ctx.close(), 1500);
         break;
       }
       case "theremin": {
@@ -945,7 +945,7 @@ export function WordCloud() {
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.25 }}
                   >
-                    {(["harp", "glass harmonica", "theremin"] as Instrument[]).map((inst) => (
+                    {(["harp", "marimba", "theremin"] as Instrument[]).map((inst) => (
                       <button
                         key={inst}
                         onClick={() => { setInstrument(inst); currentInstrument = inst; playNote(NOTES[4]); }}
