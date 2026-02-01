@@ -642,7 +642,7 @@ function placeWords(wordList: WordItem[], screenW: number, screenH: number): Pla
     let found = false;
 
     // Try radii from inner to outer
-    for (let r = 140; r < Math.min(screenW, screenH) * 0.48; r += 22) {
+    for (let r = 160; r < Math.min(screenW, screenH) * 0.55; r += 22) {
       const attempts = Math.max(12, Math.floor((r * Math.PI * 2) / 80));
       
       // Generate candidate positions evenly spaced around a circle
@@ -688,16 +688,16 @@ function placeWords(wordList: WordItem[], screenW: number, screenH: number): Pla
 
     if (!found) {
       const angle = (idx / indexed.length) * Math.PI * 2;
-      const r = 200 + idx * 12;
+      const r = 220 + idx * 12;
       const rx = r * (screenW / screenH) * 0.85;
       const ry = r * 0.9;
       bestX = cx + Math.cos(angle) * rx;
       bestY = cy + Math.sin(angle) * ry;
     }
 
-    // Each word gets its own drift parameters
-    const driftSpeed = 0.0012 + Math.random() * 0.0008;
-    const driftRadius = 20 + Math.random() * 15;
+    // Each word gets its own drift parameters - more movement and faster
+    const driftSpeed = 0.0018 + Math.random() * 0.0012;
+    const driftRadius = 35 + Math.random() * 25;
     const driftAngle = Math.random() * Math.PI * 2;
 
     placed.push({
