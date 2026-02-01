@@ -641,9 +641,9 @@ function placeWords(wordList: WordItem[], screenW: number, screenH: number): Pla
     let bestRadius = 0;
     let found = false;
 
-    // Try radii from inner to outer
-    for (let r = 160; r < Math.min(screenW, screenH) * 0.55; r += 22) {
-      const attempts = Math.max(12, Math.floor((r * Math.PI * 2) / 80));
+    // Try radii from inner to outer - spread out more
+    for (let r = 200; r < Math.min(screenW, screenH) * 0.65; r += 20) {
+      const attempts = Math.max(10, Math.floor((r * Math.PI * 2) / 90));
       
       // Generate candidate positions evenly spaced around a circle
       for (let a = 0; a < attempts; a++) {
@@ -666,10 +666,10 @@ function placeWords(wordList: WordItem[], screenW: number, screenH: number): Pla
         // Check name overlap
         if (rectsOverlap(candidate, nameRect, 20)) continue;
 
-        // Check collision with all previously placed words
+        // Check collision with all previously placed words - increased padding
         let overlaps = false;
         for (const p of placed) {
-          if (rectsOverlap(candidate, { x: p.baseX, y: p.baseY, w: p.w, h: p.h }, 12)) {
+          if (rectsOverlap(candidate, { x: p.baseX, y: p.baseY, w: p.w, h: p.h }, 20)) {
             overlaps = true;
             break;
           }
@@ -688,16 +688,16 @@ function placeWords(wordList: WordItem[], screenW: number, screenH: number): Pla
 
     if (!found) {
       const angle = (idx / indexed.length) * Math.PI * 2;
-      const r = 220 + idx * 12;
+      const r = 260 + idx * 15;
       const rx = r * (screenW / screenH) * 0.85;
       const ry = r * 0.9;
       bestX = cx + Math.cos(angle) * rx;
       bestY = cy + Math.sin(angle) * ry;
     }
 
-    // Each word gets its own drift parameters - more movement and faster
-    const driftSpeed = 0.0018 + Math.random() * 0.0012;
-    const driftRadius = 35 + Math.random() * 25;
+    // Each word gets its own drift parameters - even faster and larger movement
+    const driftSpeed = 0.0025 + Math.random() * 0.0015;
+    const driftRadius = 50 + Math.random() * 35;
     const driftAngle = Math.random() * Math.PI * 2;
 
     placed.push({
