@@ -626,26 +626,35 @@ function placeWords(wordList: WordItem[], screenW: number, screenH: number): Pla
   const placed: Placed[] = [];
   const nameRect = { x: cx, y: cy, w: 380, h: 160 };
 
-  for (let i = 0; i < wordList.length; i++) {
-    const word = wordList[i];
+  // Sort words by size (larger first) to place them first in better positions
+  const indexed = wordList.map((w, i) => ({ word: w, idx: i }));
+  indexed.sort((a, b) => b.word.size - a.word.size);
+
+  // Assign to fixed orbits to prevent collisions
+  const orbitRings: Array<{ radius: number; occupied: number[] }> = [];
+
+  for (let idx = 0; idx < indexed.length; idx++) {
+    const { word } = indexed[idx];
     const { w, h } = measureWord(word.text, word.size);
 
     let bestAngle = 0;
     let bestRadius = 0;
     let found = false;
 
+    // Try radii from inner to outer
     for (let r = 140; r < Math.min(screenW, screenH) * 0.48; r += 22) {
       const attempts = Math.max(12, Math.floor((r * Math.PI * 2) / 80));
-      const startAngle = Math.random() * Math.PI * 2;
-
+      
+      // Generate candidate angles evenly spaced around the orbit
       for (let a = 0; a < attempts; a++) {
-        const angle = startAngle + (a / attempts) * Math.PI * 2;
+        const angle = (a / attempts) * Math.PI * 2;
         const rx = r * (screenW / screenH) * 0.85;
         const ry = r * 0.9;
         const px = cx + Math.cos(angle) * rx;
         const py = cy + Math.sin(angle) * ry;
         const candidate = { x: px, y: py, w, h };
 
+        // Check bounds
         if (
           px - w / 2 < 10 ||
           px + w / 2 > screenW - 10 ||
@@ -653,11 +662,14 @@ function placeWords(wordList: WordItem[], screenW: number, screenH: number): Pla
           py + h / 2 > screenH - 10
         )
           continue;
+
+        // Check name overlap
         if (rectsOverlap(candidate, nameRect, 20)) continue;
 
+        // Check collision with all previously placed words
         let overlaps = false;
         for (const p of placed) {
-          if (rectsOverlap(candidate, { x: p.x, y: p.y, w: p.w, h: p.h }, 8)) {
+          if (rectsOverlap(candidate, { x: p.x, y: p.y, w: p.w, h: p.h }, 12)) {
             overlaps = true;
             break;
           }
@@ -674,8 +686,8 @@ function placeWords(wordList: WordItem[], screenW: number, screenH: number): Pla
     }
 
     if (!found) {
-      bestAngle = (i / wordList.length) * Math.PI * 2;
-      bestRadius = 200 + i * 12;
+      bestAngle = (idx / indexed.length) * Math.PI * 2;
+      bestRadius = 200 + idx * 12;
     }
 
     const speed =
@@ -691,7 +703,14 @@ function placeWords(wordList: WordItem[], screenW: number, screenH: number): Pla
       speed,
     });
   }
-  return placed;
+
+  // Reorder back to original word list order
+  const result: Placed[] = new Array(placed.length);
+  for (let i = 0; i < indexed.length; i++) {
+    result[indexed[i].idx] = placed[i];
+  }
+
+  return result;
 }
 
 /* ========== CLOUD BACKGROUND ========== */
@@ -780,8 +799,8 @@ export function WordCloud() {
     }
 
     const animate = () => {
-      setPlaced((prev) => {
-        const updated = prev.map((p, i) => {
+      setPlaced((prev) =>
+        prev.map((p, i) => {
           if (draggingRef.current === i) return p;
           const newAngle = p.angle + p.speed;
           const rx = p.radius * (dims.w / dims.h) * 0.85;
@@ -792,39 +811,8 @@ export function WordCloud() {
             x: cx + Math.cos(newAngle) * rx,
             y: cy + Math.sin(newAngle) * ry,
           };
-        });
-
-        // Check and resolve overlaps to prevent collisions
-        for (let i = 0; i < updated.length; i++) {
-          for (let j = i + 1; j < updated.length; j++) {
-            const a = updated[i];
-            const b = updated[j];
-            const pad = 12; // padding between words
-            
-            if (rectsOverlap(a, { x: b.x, y: b.y, w: b.w, h: b.h }, pad)) {
-              // Push words apart to prevent overlap
-              const dx = b.x - a.x;
-              const dy = b.y - a.y;
-              const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-              const minDist = (a.w + b.w) / 2 + pad;
-              const overlap = minDist - dist;
-              
-              if (overlap > 0) {
-                const nx = dx / dist;
-                const ny = dy / dist;
-                const push = overlap / 2 + 1;
-                
-                updated[i].x -= nx * push;
-                updated[i].y -= ny * push;
-                updated[j].x += nx * push;
-                updated[j].y += ny * push;
-              }
-            }
-          }
-        }
-
-        return updated;
-      });
+        })
+      );
       animRef.current = requestAnimationFrame(animate);
     };
     animRef.current = requestAnimationFrame(animate);
