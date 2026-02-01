@@ -58,7 +58,7 @@ function playNote(freq: number) {
       case "kalimba": {
         // Metallic pluck — sharp attack, long resonant decay, hollow body
         const master = ctx.createGain();
-        master.gain.setValueAtTime(0.16, t);
+        master.gain.setValueAtTime(0.20, t);
         master.gain.exponentialRampToValueAtTime(0.06, t + 0.08);
         master.gain.exponentialRampToValueAtTime(0.0001, t + 2.5);
         master.connect(ctx.destination);
