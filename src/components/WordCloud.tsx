@@ -287,8 +287,6 @@ function FunFactsContent() {
 function HackathonsContent() {
   const hacks = [
     { name: "AWS Mission Autonomy", desc: "Autonomous multi-robot coordination for disaster response", link: "https://drive.google.com/file/d/12nV14O641DzgYW2PmH9pJ1sL3n7uomGm/view?usp=sharing", won: true },
-    { name: "Lightspeed Hackathon", desc: "Voice bot for blue-collar resume-filling", link: "#lightspeed-hackathon", won: true },
-    { name: "HackGT", desc: "VR for Parkinson\u2019s Detection", link: "#hackgt", won: false },
   ];
   return (
     <div className="text-left">
@@ -410,7 +408,6 @@ const words: WordItem[] = [
     content:
       "Working on agent-based modeling for wildfire suppression at Vanderbilt with Dr. Gilligan. Basically figuring out how drones should explore vs. exploit.",
     links: [
-      { label: "video", href: "#swarm-video" },
       { label: "slides", href: "https://drive.google.com/file/d/1kv0N_m9XRw2TQB0HjMckFOkT5v5R29B5/view?usp=sharing" },
     ],
   },
@@ -423,7 +420,6 @@ const words: WordItem[] = [
     tags: ["Unfinished", "Self-aware", "Reflective"],
     content:
       "VC-backed chess platform. Raised $70K pre-seed. Taught me everything about cofounder dynamics and when to walk away.",
-    links: [{ label: "learn more", href: "#failed-startup" }],
   },
   {
     text: "TEDx",
@@ -448,6 +444,9 @@ const words: WordItem[] = [
     tags: ["Whimsical", "Experimental", "Reflective"],
     content:
       "NYT 'Coming of Age' winner. I write about the intersections I live in.",
+    links: [
+      { label: "winner", href: "https://www.nytimes.com/2022/01/05/learning/what-its-like-to-be-a-teenager-now-the-winners-of-our-coming-of-age-in-2021-contest.html" },
+    ],
   },
   {
     text: "nanotech research",
@@ -460,7 +459,6 @@ const words: WordItem[] = [
       "Researching nanotechnology and graphene.",
     links: [
       { label: "report", href: "https://drive.google.com/file/d/1nrCKIwKDq6Z71lMwoAMeUX9YG1779IJV/view?usp=sharing" },
-      { label: "photos", href: "#nanotech-photos" },
     ],
   },
   // --- Clickable with rich content ---
@@ -482,7 +480,7 @@ const words: WordItem[] = [
     richContent: AestheticsContent,
   },
   {
-    text: "research",
+    text: "my major",
     size: 20,
     color: COLORS[1],
     italic: true,
