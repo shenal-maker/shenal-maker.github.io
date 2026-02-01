@@ -12,7 +12,7 @@ const NOTES = [
   587.33, 659.25, 739.99, 880.00, 987.77,
 ];
 
-type Instrument = "harp" | "kalimba" | "theremin";
+type Instrument = "harp" | "glass harmonica" | "theremin";
 
 let currentInstrument: Instrument = "harp";
 
@@ -55,32 +55,33 @@ function playNote(freq: number) {
         setTimeout(() => ctx.close(), 2300);
         break;
       }
-      case "kalimba": {
-        // Metallic pluck — sharp attack, long resonant decay, hollow body
+      case "glass harmonica": {
+        // Ethereal glass harmonica — smooth sine wave with subtle vibrato
         const master = ctx.createGain();
-        master.gain.setValueAtTime(0.20, t);
-        master.gain.exponentialRampToValueAtTime(0.06, t + 0.08);
-        master.gain.exponentialRampToValueAtTime(0.0001, t + 2.5);
+        master.gain.setValueAtTime(0, t);
+        master.gain.linearRampToValueAtTime(0.18, t + 0.4);
+        master.gain.setValueAtTime(0.18, t + 2.2);
+        master.gain.exponentialRampToValueAtTime(0.0001, t + 3.8);
         master.connect(ctx.destination);
-        // Fundamental + slightly detuned "tine" resonance
-        [
-          { f: freq, g: 0.18, type: "sine" as OscillatorType },
-          { f: freq * 1.0015, g: 0.12, type: "triangle" as OscillatorType },
-          { f: freq * 3, g: 0.04, type: "sine" as OscillatorType },
-          { f: freq * 5.4, g: 0.015, type: "sine" as OscillatorType },
-        ].forEach(({ f, g, type }) => {
-          const osc = ctx.createOscillator();
-          const env = ctx.createGain();
-          osc.type = type;
-          osc.frequency.value = f;
-          env.gain.setValueAtTime(g, t);
-          env.gain.exponentialRampToValueAtTime(0.0001, t + 2.2);
-          osc.connect(env);
-          env.connect(master);
-          osc.start(t);
-          osc.stop(t + 2.5);
-        });
-        setTimeout(() => ctx.close(), 2800);
+        
+        const osc = ctx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        
+        // Subtle vibrato for that characteristic wavering glass sound
+        const vibrato = ctx.createOscillator();
+        const vibratoGain = ctx.createGain();
+        vibrato.frequency.value = 4.5;
+        vibratoGain.gain.value = freq * 0.012;
+        vibrato.connect(vibratoGain);
+        vibratoGain.connect(osc.frequency);
+        
+        osc.connect(master);
+        osc.start(t);
+        vibrato.start(t);
+        osc.stop(t + 3.8);
+        vibrato.stop(t + 3.8);
+        setTimeout(() => ctx.close(), 4000);
         break;
       }
       case "theremin": {
@@ -944,7 +945,7 @@ export function WordCloud() {
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.25 }}
                   >
-                    {(["harp", "kalimba", "theremin"] as Instrument[]).map((inst) => (
+                    {(["harp", "glass harmonica", "theremin"] as Instrument[]).map((inst) => (
                       <button
                         key={inst}
                         onClick={() => { setInstrument(inst); currentInstrument = inst; playNote(NOTES[4]); }}
