@@ -4,11 +4,12 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /* ========== HARP AUDIO ENGINE ========== */
-// Epitaph of Seikilos melody (Phrygian), transposed up to octave 5-6 for brightness
-// Approximate melody: E5 F5 E5 D5 F5 G5 A5 G5 F5 E5 D5 E5 F5 E5 G5 A5
+// Epitaph of Seikilos melody
+// D4 A4 A4 F#4 G4 A4 G4 F#4 G4 A4 G4 F#4 E4 D4 E4 C4 B3 A3
 const SEIKILOS = [
-  659.25, 698.46, 659.25, 587.33, 698.46, 783.99, 880.0, 783.99,
-  698.46, 659.25, 587.33, 659.25, 698.46, 659.25, 783.99, 880.0,
+  293.66, 440.0, 440.0, 369.99, 392.0, 440.0, 392.0, 369.99,
+  392.0, 440.0, 392.0, 369.99, 329.63, 293.66, 329.63, 261.63,
+  246.94, 220.0,
 ];
 
 function playHarpNote(freq: number) {
@@ -46,10 +47,17 @@ function playHarpNote(freq: number) {
   }
 }
 
-// Magical ascending arpeggio for link clicks
+// Arpeggio: play 6 consecutive notes from the Seikilos melody
+let arpeggioStart = 0;
+
 function playArpeggio() {
-  // A major arpeggio across two octaves, high register
-  const notes = [880.0, 1108.73, 1318.51, 1760.0, 2217.46, 2637.02];
+  const len = 6;
+  const notes = [];
+  for (let i = 0; i < len; i++) {
+    notes.push(SEIKILOS[(arpeggioStart + i) % SEIKILOS.length]);
+  }
+  arpeggioStart = (arpeggioStart + len) % SEIKILOS.length;
+
   notes.forEach((freq, i) => {
     setTimeout(() => {
       try {
@@ -488,7 +496,18 @@ export function WordCloud() {
                 className="mt-4 text-xs tracking-widest uppercase"
                 style={{ color: "var(--fg-muted)", letterSpacing: "0.2em" }}
               >
-                click the words &middot; listen
+                click the words &middot;{" "}
+                <a
+                  href="https://www.youtube.com/watch?v=hIFcIE23Su4&list=RDhIFcIE23Su4&start_radio=1"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="pointer-events-auto underline underline-offset-2 transition-colors duration-200"
+                  style={{ color: "var(--accent)" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
+                  onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+                >
+                  listen
+                </a>
               </p>
             </motion.div>
           </motion.div>
