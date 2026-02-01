@@ -287,6 +287,8 @@ function FunFactsContent() {
 function HackathonsContent() {
   const hacks = [
     { name: "AWS Mission Autonomy", desc: "Autonomous multi-robot coordination for disaster response", link: "https://drive.google.com/file/d/12nV14O641DzgYW2PmH9pJ1sL3n7uomGm/view?usp=sharing", won: true },
+    { name: "Lightspeed hackathon", desc: "resume voice-agent for blue-collar jobs", won: true },
+    { name: "HackGT", desc: "VR for Parkinson's", won: false },
   ];
   return (
     <div className="text-left">
@@ -294,7 +296,11 @@ function HackathonsContent() {
       <div className="space-y-2 mb-6">
         {hacks.filter(h => h.won).map(h => (
           <div key={h.name}>
-            <a href={h.link} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-sm font-medium underline underline-offset-4" style={{ fontFamily: "var(--font-serif)", color: "var(--fg)" }}>{h.name}</a>
+            {h.link ? (
+              <a href={h.link} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-sm font-medium underline underline-offset-4" style={{ fontFamily: "var(--font-serif)", color: "var(--fg)" }}>{h.name}</a>
+            ) : (
+              <p className="text-sm font-medium" style={{ fontFamily: "var(--font-serif)", color: "var(--fg)" }}>{h.name}</p>
+            )}
             <p className="text-xs" style={{ color: "var(--fg-muted)" }}>{h.desc}</p>
           </div>
         ))}
@@ -303,7 +309,11 @@ function HackathonsContent() {
       <div className="space-y-2">
         {hacks.filter(h => !h.won).map(h => (
           <div key={h.name}>
-            <a href={h.link} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-sm font-medium underline underline-offset-4" style={{ fontFamily: "var(--font-serif)", color: "var(--fg)" }}>{h.name}</a>
+            {h.link ? (
+              <a href={h.link} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="text-sm font-medium underline underline-offset-4" style={{ fontFamily: "var(--font-serif)", color: "var(--fg)" }}>{h.name}</a>
+            ) : (
+              <p className="text-sm font-medium" style={{ fontFamily: "var(--font-serif)", color: "var(--fg)" }}>{h.name}</p>
+            )}
             <p className="text-xs" style={{ color: "var(--fg-muted)" }}>{h.desc}</p>
           </div>
         ))}
@@ -336,6 +346,25 @@ function ResearchContent() {
         I care deeply about mental resilience and creating systems that help people <strong>ask better questions</strong>.
       </p>
     </div>
+  );
+}
+
+function MusicComposingContent() {
+  return (
+    <p className="text-sm leading-relaxed" style={{ color: "var(--fg-muted)" }}>
+      NYT 'Coming of Age'{" "}
+      <a
+        href="https://www.nytimes.com/2022/01/05/learning/what-its-like-to-be-a-teenager-now-the-winners-of-our-coming-of-age-in-2021-contest.html"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="underline underline-offset-2"
+        style={{ color: "var(--accent)" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        winner
+      </a>
+      . I write about the intersections I live in.
+    </p>
   );
 }
 
@@ -442,11 +471,7 @@ const words: WordItem[] = [
     clickable: true,
     noteIdx: 4,
     tags: ["Whimsical", "Experimental", "Reflective"],
-    content:
-      "NYT 'Coming of Age' winner. I write about the intersections I live in.",
-    links: [
-      { label: "winner", href: "https://www.nytimes.com/2022/01/05/learning/what-its-like-to-be-a-teenager-now-the-winners-of-our-coming-of-age-in-2021-contest.html" },
-    ],
+    richContent: MusicComposingContent,
   },
   {
     text: "nanotech research",
