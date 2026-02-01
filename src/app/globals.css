@@ -1,26 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300;1,9..40,400&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #FAF8F5;
+  --fg: #1A1A1A;
+  --fg-muted: #6B6560;
+  --accent: #C45D3E;
+  --accent-light: #E8A592;
+  --border: #E5E0DA;
+  --surface: #F2EFEB;
+  --cloud-1: #D4DFEE;
+  --cloud-2: #E8DDD4;
+  --cloud-3: #C9CADF;
+  --cloud-4: #E5E0D2;
+  --cloud-5: #B8C8D8;
+  --ripple: #C45D3E;
+  --font-serif: 'Instrument Serif', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+::selection {
+  background: var(--accent);
+  color: white;
+}
+
+/* Ripple animation */
+@keyframes ripple-expand {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.ripple-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid var(--ripple);
+  pointer-events: none;
+  animation: ripple-expand 1.6s ease-out forwards;
 }
