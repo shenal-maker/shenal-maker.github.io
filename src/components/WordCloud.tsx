@@ -56,19 +56,19 @@ function playNote(freq: number) {
         break;
       }
       case "marimba": {
-        // Warm wooden marimba strike — percussive with rich harmonics
+        // Warm wooden marimba strike — percussive with rich harmonics, 2 octaves lower
         const master = ctx.createGain();
-        master.gain.setValueAtTime(0.16, t);
-        master.gain.exponentialRampToValueAtTime(0.08, t + 0.08);
+        master.gain.setValueAtTime(0.22, t);
+        master.gain.exponentialRampToValueAtTime(0.10, t + 0.08);
         master.gain.exponentialRampToValueAtTime(0.0001, t + 1.2);
         master.connect(ctx.destination);
         
-        // Warm woody tone: fundamental + octave + slight detuning
+        // Warm woody tone: fundamental + octave + slight detuning (all 2 octaves lower)
         [
-          { f: freq, g: 0.12, type: "sine" as OscillatorType },
-          { f: freq * 2, g: 0.06, type: "sine" as OscillatorType },
-          { f: freq * 0.98, g: 0.04, type: "triangle" as OscillatorType },
-          { f: freq * 1.5, g: 0.03, type: "sine" as OscillatorType },
+          { f: freq * 0.25, g: 0.16, type: "sine" as OscillatorType },
+          { f: freq * 0.5, g: 0.08, type: "sine" as OscillatorType },
+          { f: freq * 0.245, g: 0.06, type: "triangle" as OscillatorType },
+          { f: freq * 0.375, g: 0.04, type: "sine" as OscillatorType },
         ].forEach(({ f, g, type }) => {
           const osc = ctx.createOscillator();
           const env = ctx.createGain();
