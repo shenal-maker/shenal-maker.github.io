@@ -34,7 +34,7 @@ const projects = [
     description:
       "Grand Prize winner ($10K). Built an AI-powered disaster response tool using AWS IoT Core and computer vision.",
     detail: "YOLO, AWS S3, Greengrass, IoT Core",
-    link: "#",
+    link: "https://drive.google.com/file/d/12nV14O641DzgYW2PmH9pJ1sL3n7uomGm/view?usp=sharing",
   },
   {
     title: "TEDx Talk",

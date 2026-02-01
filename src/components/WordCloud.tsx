@@ -286,7 +286,7 @@ function FunFactsContent() {
 
 function HackathonsContent() {
   const hacks = [
-    { name: "AWS Mission Autonomy", desc: "Autonomous multi-robot coordination for disaster response", link: "#aws-hackathon", won: true },
+    { name: "AWS Mission Autonomy", desc: "Autonomous multi-robot coordination for disaster response", link: "https://drive.google.com/file/d/12nV14O641DzgYW2PmH9pJ1sL3n7uomGm/view?usp=sharing", won: true },
     { name: "Lightspeed Hackathon", desc: "Voice bot for blue-collar resume-filling", link: "#lightspeed-hackathon", won: true },
     { name: "HackGT", desc: "VR for Parkinson\u2019s Detection", link: "#hackgt", won: false },
   ];
@@ -411,7 +411,7 @@ const words: WordItem[] = [
       "Working on agent-based modeling for wildfire suppression at Vanderbilt with Dr. Gilligan. Basically figuring out how drones should explore vs. exploit.",
     links: [
       { label: "video", href: "#swarm-video" },
-      { label: "slides", href: "#swarm-slides" },
+      { label: "slides", href: "https://drive.google.com/file/d/1kv0N_m9XRw2TQB0HjMckFOkT5v5R29B5/view?usp=sharing" },
     ],
   },
   {
@@ -456,7 +456,7 @@ const words: WordItem[] = [
     content:
       "Researching nanotechnology and graphene.",
     links: [
-      { label: "powerpoint", href: "#nanotech-powerpoint" },
+      { label: "report", href: "https://drive.google.com/file/d/1nrCKIwKDq6Z71lMwoAMeUX9YG1779IJV/view?usp=sharing" },
       { label: "photos", href: "#nanotech-photos" },
     ],
   },
