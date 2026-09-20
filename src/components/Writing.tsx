@@ -2,7 +2,27 @@
 
 import { motion, type Variants } from "framer-motion";
 
-const posts = [
+type Post = {
+  title: string;
+  type: string;
+  date: string;
+  time: string;
+  tags: string[];
+  preview: string;
+  href?: string;
+};
+
+const posts: Post[] = [
+  {
+    title: "Drone Swarm Strategies for Wildfire Containment: An Agent-Based Modeling Study",
+    type: "Paper",
+    date: "Dec 2025",
+    time: "PDF",
+    tags: ["research", "AI"],
+    preview:
+      "Extending an agent-based forest fire model with autonomous drone agents. Intermediate parameter configurations outperform the rest, and large detection radii lose coverage through ineffective convergence.",
+    href: "/drone-swarm-wildfire-abm.pdf",
+  },
   {
     title: "Why I Left Internships to Build",
     type: "Essay",
@@ -73,7 +93,9 @@ export function Writing() {
             <motion.a
               key={p.title}
               variants={item}
-              href="#"
+              href={p.href ?? "#"}
+              target={p.href ? "_blank" : undefined}
+              rel={p.href ? "noopener noreferrer" : undefined}
               className="group block p-6 rounded-lg transition-all duration-300"
               style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
               whileHover={{ y: -2, boxShadow: "0 8px 30px rgba(0,0,0,0.06)" }}
