@@ -439,7 +439,17 @@ export function Puzzle() {
                 startups.
               </p>
               <p>
-                Right now, I&apos;m building the ultimate communication app for couples. Because I love love, and I think
+                Right now, I&apos;m building{" "}
+                <a
+                  href="https://tryhuddle.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-2"
+                  style={{ color: "var(--accent)" }}
+                >
+                  the ultimate communication app for couples
+                </a>
+                . Because I love love, and I think
                 we spend far too much energy searching for it and not nearly enough cultivating it.
               </p>
               <p style={{ color: "var(--accent)" }}>Flip any card.</p>
