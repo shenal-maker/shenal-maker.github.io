@@ -1,5 +1,5 @@
-import { WordCloud } from "@/components/WordCloud";
+import { Puzzle } from "@/components/Puzzle";
 
 export default function Home() {
-  return <WordCloud />;
+  return <Puzzle />;
 }
