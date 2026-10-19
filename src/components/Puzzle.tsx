@@ -447,10 +447,9 @@ export function Puzzle() {
                   className="underline underline-offset-2"
                   style={{ color: "var(--accent)" }}
                 >
-                  a communication app for couples
+                  projects for love
                 </a>
-                . Because I love love, and I think we spend too much time looking for the right person and too
-                little learning how to love the person we&apos;ve found.
+                .
               </p>
               <p style={{ color: "var(--accent)" }}>Flip any card to see my past projects.</p>
             </div>
