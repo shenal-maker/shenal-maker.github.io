@@ -439,7 +439,17 @@ export function Puzzle() {
                 startups.
               </p>
               <p>
-                Right now, I&apos;m building{" "}
+                Right now, I&apos;m working on{" "}
+                <a
+                  href="https://vanderbiltaisafety.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline underline-offset-2"
+                  style={{ color: "var(--accent)" }}
+                >
+                  AI safety
+                </a>{" "}
+                &amp;{" "}
                 <a
                   href="https://tryhuddle.app/"
                   target="_blank"
